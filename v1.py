@@ -186,7 +186,7 @@ class App(CTk):
         configs = CTkFrame(scroll, border_width=2)
         configs.grid(row=1, column=0, padx=20, pady=20, sticky="nw")
         CTkLabel(configs, text="Config Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
-        CTkLabel(configs, text="Rod Type:").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(configs, text="Active Configuration:").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
         config_list = self.load_configs()
         config_var = StringVar(value=config_list[0] if config_list else "default.json")
         self.vars["active_config"] = config_var

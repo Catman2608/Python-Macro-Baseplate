@@ -1,8 +1,8 @@
 {
-    "active_config": "default",
+    "active_config": "sab",
     "start_key": "F5",
     "start_recording_key": "F6",
     "stop_key": "F7",
     "stop_recording_key": "F8",
-    "combobox_active_config": "default"
+    "combobox_active_config": "sab"
 }
