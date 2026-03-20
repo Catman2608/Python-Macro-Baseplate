@@ -1,0 +1,46 @@
+name: Build Windows EXE
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build-windows:
+        runs-on: windows-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install pyinstaller opencv-python numpy pillow customtkinter
+
+            - name: Build EXE with PyInstaller
+              shell: cmd
+              run: |
+                  pyinstaller --onefile --windowed v2.py ^
+                    --hidden-import=cv2 ^
+                    --hidden-import=numpy ^
+                    --collect-all customtkinter ^
+                    --add-data "configs;configs" ^
+                    --name "MyApp"
+
+            - name: List dist contents
+              run: |
+                  echo "Files in dist folder:"
+                  dir dist
+                  echo "Size of executable:"
+                  dir dist\MyApp.exe
+
+            - name: Upload EXE artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Windows-EXE
+                  path: dist/MyApp.exe
+                  if-no-files-found: error
