@@ -205,10 +205,10 @@ class App(CTk):
         hotkey_settings.grid(row=2, column=0, padx=20, pady=20, sticky="nw")
         CTkLabel(hotkey_settings, text="Hotkey Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
         # Start key
-        CTkLabel(hotkey_settings, text="Start Key").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Change Bar Areas Key").grid( row=2, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Stop Key").grid( row=3, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Screenshot Key").grid( row=4, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Start Playback Key").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Start Recording Key").grid( row=2, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Stop Playback Key").grid( row=3, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Stop Recording Key").grid( row=4, column=0, padx=12, pady=6, sticky="w" )
         # Start, screenshot and stop key changer
         start_key_var = StringVar(value="F5")
         self.vars["start_key"] = start_key_var
