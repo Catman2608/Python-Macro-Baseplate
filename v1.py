@@ -1,4 +1,6 @@
-# Initialization
+# Check the second and third tab for example CustomTkinter syntaxes. Sample macro functions are in the 24 reference.py (ICF V2.4 reference)
+
+# Imports
 from customtkinter import *
 import os
 import subprocess
@@ -23,8 +25,9 @@ keyboard_controller = KeyboardController()
 mouse_controller = MouseController()
 
 # Set appearance
-set_default_color_theme("blue")
-set_appearance_mode("dark")
+set_default_color_theme("blue") # This makes the buttons having a blue color (you can't set this to a custom color)
+# set_appearance_mode("dark") # This makes the theme always dark
+# These lines until the App class fixes the "crashing when compiled" problem on macOS
 def get_base_path():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
@@ -32,11 +35,11 @@ def get_base_path():
 if sys.platform == "darwin":
     user_config_dir = os.path.join(os.path.expanduser("~"), 
                                    "Library", "Application Support", 
-                                   "IcantFishV2", "configs")
+                                   "Example", "configs")
 else:
     user_config_dir = os.path.join(os.path.expanduser("~"),
                                    "AppData","Roaming",
-                                   "IcantFishV2","configs")
+                                   "Example","configs")
 
 os.makedirs(user_config_dir, exist_ok=True)
 BASE_PATH = get_base_path()
@@ -44,12 +47,12 @@ BASE_PATH = get_base_path()
 if sys.platform == "darwin" and getattr(sys, "frozen", False):
     # Only use Application Support when bundled
     USER_CONFIG_DIR = os.path.join(os.path.expanduser("~"), "Library", 
-                                   "Application Support", "IcantFishV2", 
+                                   "Application Support", "Example", 
                                    "configs")
 elif sys.platform == "win32" and getattr(sys, "frozen", False):
     # Only use AppData/Roaming when bundled
     USER_CONFIG_DIR = os.path.join(os.path.expanduser("~"), "AppData",
-                                   "Roaming", "IcantFishV2",
+                                   "Roaming", "Example",
                                    "configs")
 else:
     # During development, use local project folder
@@ -59,7 +62,7 @@ os.makedirs(USER_CONFIG_DIR, exist_ok=True)
 if sys.platform == "darwin":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 else:
-    pass # You're on Windows, no need to change the working directory
+    pass
 class App(CTk):
     def __init__(self):
         super().__init__()
@@ -74,7 +77,7 @@ class App(CTk):
 
         # Window 
         self.geometry("800x600")
-        self.title("I Can't Automate V1.0")
+        self.title("Test (Change this)")
 
         # Macro state
         self.macro_running = False
@@ -83,8 +86,6 @@ class App(CTk):
         # Hotkey variables
         self.hotkey_start = Key.f5
         self.hotkey_stop = Key.f7
-        self.hotkey_start_recording = Key.f6            # added for the bar area selector
-        self.hotkey_stop_recording = Key.f8
         self.hotkey_labels = {}  # Store label widgets for dynamic updates
 
         # Start hotkey listener
@@ -105,7 +106,7 @@ class App(CTk):
         # Logo Label
         logo_label = CTkLabel(
             top_bar, 
-            text="I CAN'T AUTOMATE V1.0",
+            text="TEST (ALL CAPS)",
             font=CTkFont(size=16, weight="bold")
         )
         logo_label.grid(row=0, column=0, sticky="w")
@@ -122,22 +123,22 @@ class App(CTk):
             button_frame,
             text="Website",
             corner_radius=32,
-            command=self.open_link("https://sites.google.com/view/icf-automation-network/")
-       ).pack(side="left", padx=6)
+            command=self.open_link("https://sites.google.com/view/icf-automation-network/") # This opens the ICF website (change this)
+        ).pack(side="left", padx=6)
 
         CTkButton(
             button_frame,
             text="Upcoming Features",
             corner_radius=32,
-            command=self.open_link("https://docs.google.com/document/d/1WwWWMR-eN-R-GO42IioToHpWTgiXkLoiNE_4NeE-GsU/edit?tab=t.0")
-       ).pack(side="left", padx=6)
+            command=self.open_link("https://docs.google.com/document/d/1WwWWMR-eN-R-GO42IioToHpWTgiXkLoiNE_4NeE-GsU/edit?tab=t.0") # This opens the upcoming features docs (change this)
+        ).pack(side="left", padx=6)
 
         CTkButton(
             button_frame,
             text="Tutorial",
             corner_radius=32,
-            command=self.open_link("https://docs.google.com/document/d/1qjhgcONxpZZbSAEYiSCXoUXGjQwd7Jghf4EysWC4Cps/edit?usp=drive_link")
-       ).pack(side="left", padx=6)
+            command=self.open_link("https://docs.google.com/document/d/1qjhgcONxpZZbSAEYiSCXoUXGjQwd7Jghf4EysWC4Cps/edit?usp=drive_link") # This opens the ICF discord (change this)
+        ).pack(side="left", padx=6)
 
         # Tabs 
         self.tabs = CTkTabview(
@@ -151,14 +152,14 @@ class App(CTk):
             sticky="nsew"
         )
 
-        self.tabs.add("Basic")
-        self.tabs.add("Recording")
-        self.tabs.add("Playback")
+        self.tabs.add("Tab 1")
+        self.tabs.add("Tab 2")
+        self.tabs.add("Tab 3")
 
         # Build tabs
-        self.build_general_tab(self.tabs.tab("Basic"))
-        self.build_recording_tab(self.tabs.tab("Recording"))
-        self.build_playback_tab(self.tabs.tab("Playback"))
+        self.build_1_tab(self.tabs.tab("Tab 1"))
+        self.build_2_tab(self.tabs.tab("Tab 2"))
+        self.build_3_tab(self.tabs.tab("Tab 3"))
 
         # Grid behavior
         self.grid_columnconfigure(0, weight=1)
@@ -168,7 +169,6 @@ class App(CTk):
         self.grid_rowconfigure(2, weight=1)  # Tabs take remaining space
 
         last = self.load_last_config_name()
-        self.bar_areas = {"fish": None, "recording": None}
         self.load_settings(last or "default.json")
         # Arrow variables
         self.initial_bar_size = None
@@ -176,7 +176,7 @@ class App(CTk):
         self.area_selector = None
         self.last_fish_x = None
     # BASIC SETTINGS TAB
-    def build_general_tab(self, parent):
+    def build_1_tab(self, parent):
         scroll = CTkScrollableFrame(parent)
         scroll.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         # VERY important
@@ -205,33 +205,58 @@ class App(CTk):
         hotkey_settings.grid(row=2, column=0, padx=20, pady=20, sticky="nw")
         CTkLabel(hotkey_settings, text="Hotkey Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
         # Start key
-        CTkLabel(hotkey_settings, text="Start Playback Key").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Start Recording Key").grid( row=2, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Stop Playback Key").grid( row=3, column=0, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_settings, text="Stop Recording Key").grid( row=4, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Start Key").grid( row=1, column=0, padx=12, pady=6, sticky="w" )
+        CTkLabel(hotkey_settings, text="Stop Key").grid( row=2, column=0, padx=12, pady=6, sticky="w" )
         # Start, screenshot and stop key changer
         start_key_var = StringVar(value="F5")
         self.vars["start_key"] = start_key_var
         start_key_entry = CTkEntry( hotkey_settings, width=120, textvariable=start_key_var )
         start_key_entry.grid(row=1, column=1, padx=12, pady=10, sticky="w")
-        start_recording_key_var = StringVar(value="F6")
-        self.vars["start_recording_key"] = start_recording_key_var
-        start_recording_key_entry = CTkEntry( hotkey_settings, width=120, textvariable=start_recording_key_var )
-        start_recording_key_entry.grid(row=2, column=1, padx=12, pady=10, sticky="w")
         stop_key_var = StringVar(value="F7")
         self.vars["stop_key"] = stop_key_var
         stop_key_entry = CTkEntry( hotkey_settings, width=120, textvariable=stop_key_var )
-        stop_key_entry.grid(row=3, column=1, padx=12, pady=10, sticky="w")
-        stop_recording_key_var = StringVar(value="F8")
-        self.vars["stop_recording_key"] = stop_recording_key_var
-        stop_recording_key_entry = CTkEntry( hotkey_settings, width=120, textvariable=stop_recording_key_var )
-        stop_recording_key_entry.grid(row=4, column=1, padx=12, pady=10, sticky="w")
-    # Recording TAB
-    def build_recording_tab(self, parent):
-        pass # not implemented yet
-    # Playback TAB
-    def build_playback_tab(self, parent):
-        pass # not implemented yet
+        stop_key_entry.grid(row=2, column=1, padx=12, pady=10, sticky="w")
+    # Second tab
+    def build_2_tab(self, parent):
+        # 4 lines below initialize the scroll wheel and the grid section
+        # scroll = CTkScrollableFrame(parent)
+        # scroll.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+        # parent.grid_rowconfigure(0, weight=1)
+        # parent.grid_columnconfigure(0, weight=1)
+
+        # Initialize Frame
+        # overlay_options = CTkFrame(scroll, border_width=2)
+        # overlay_options.grid(row=4, column=0, padx=20, pady=20, sticky="nw")
+
+        # Frame Header Label (important)
+        # CTkLabel(overlay_options, text="Overlay Options", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
+
+        # Initialize Checkbox
+        # fish_overlay_var = StringVar(value="off") # This line and the line below makes the checkbox save and load
+        # self.vars["fish_overlay"] = fish_overlay_var
+        # fish_overlay_cb = CTkCheckBox(overlay_options, text="Fish Overlay", variable=fish_overlay_var, onvalue="on", offvalue="off") # This line initializes checkboxes
+        # fish_overlay_cb.grid(row=1, column=0, padx=12, pady=8, sticky="w") # This line initializes the position for the checkboxes (most important)
+
+        # Normal Label and Entry
+        # CTkLabel(sequence_options, text="Delay before casting").grid( row=3, column=0, padx=12, pady=8, sticky="w") # This is the label syntax
+        # casting_delay2_var = StringVar(value="0.0") # This line is the default/placeholder value
+        # self.vars["casting_delay2"] = casting_delay2_var # This line makes the entry save and load
+        # casting_delay2_entry = CTkEntry(sequence_options, width=120, textvariable=casting_delay2_var) # This line initializes the entry
+        # casting_delay2_entry.grid(row=3, column=1, padx=12, pady=8, sticky="w") # This line initializes the position for the entry (most important)
+
+        pass # Comments doesn't count in functions
+    # Third tab
+    def build_3_tab(self, parent):
+        # This tab contains a combobox
+        # CTkLabel(casting_mode, text="Casting Mode:").grid(row=1, column=0, padx=12, pady=10, sticky="w" ) # You already know what this does in the second tab
+        # casting_mode_var = StringVar(value="Normal") # This line is the default/placeholder value
+        # self.vars["casting_mode"] = casting_mode_var # This line makes the entry save and load
+        # casting_cb = CTkComboBox(casting_mode, values=["Perfect", "Normal"], 
+        #                        variable=casting_mode_var, command=lambda v: self.set_status(f"Casting Mode: {v}")
+        #                        ) # These 3 lines initializes the combobox
+        # casting_cb.grid(row=1, column=1, padx=12, pady=10, sticky="w") # This line initializes the position for the comboboxes (most important)
+        # self.comboboxes["casting_mode"] = casting_cb # This line makes the entry save and load
+        pass
     # Save and load settings
     def load_configs(self):
         """Load list of available config files."""
@@ -291,16 +316,12 @@ class App(CTk):
             data = {
                 # IMPORTANT: Save hotkeys
                 "start_key": self.vars["start_key"].get(),
-                "start_recording_key": self.vars["start_recording_key"].get(),
-                "stop_recording_key": self.vars["stop_recording_key"].get(),
                 "stop_key": self.vars["stop_key"].get()
             }
             with open("last_config.json", "w") as f:
                 json.dump(data, f, indent=4)
             # IMPORTANT: Immediately update active hotkeys
             self.hotkey_start = self._string_to_key(self.vars["start_key"].get())
-            self.hotkey_start_recording = self._string_to_key(self.vars["start_recording_key"].get())
-            self.hotkey_stop_recording = self._string_to_key(self.vars["stop_recording_key"].get())
             self.hotkey_stop = self._string_to_key(self.vars["stop_key"].get())
         except Exception as e:
             import traceback
@@ -401,19 +422,13 @@ class App(CTk):
                     data = json.load(f)
                     # IMPORTANT: Load hotkeys if present
                     start_key = data.get("start_key", "F5")
-                    change_key = data.get("start_recording_key", "F6")
-                    stop_recording_key = data.get("stop_recording_key", "F8")
                     stop_key = data.get("stop_key", "F7")
 
                     self.vars["start_key"].set(start_key)
-                    self.vars["start_recording_key"].set(change_key)
-                    self.vars["stop_recording_key"].set(stop_recording_key)
                     self.vars["stop_key"].set(stop_key)
 
                     # Convert to pynput keys
                     self.hotkey_start = self._string_to_key(start_key)
-                    self.hotkey_start_recording = self._string_to_key(change_key)
-                    self.hotkey_stop_recording = self._string_to_key(stop_recording_key)
                     self.hotkey_stop = self._string_to_key(stop_key)
         except:
             pass # don't do anything here
@@ -438,18 +453,7 @@ class App(CTk):
             return key_string  # normal character keys
     def on_key_press(self, key):
         try:
-            if key == self.hotkey_start_recording and not self.macro_running:
-                config_name = self.vars["active_config"].get()
-                self.save_settings(config_name)
-
-                self.macro_running = True
-                self.after(0, self.withdraw)
-                threading.Thread(target=self.start_recording, daemon=True).start()
-
-            elif key == self.hotkey_stop_recording:
-                self.stop_recording()
-
-            elif key == self.hotkey_start and not self.macro_running:
+            if key == self.hotkey_start and not self.macro_running:
                 config_name = self.vars["active_config"].get()
                 self.save_settings(config_name)
 
@@ -464,20 +468,8 @@ class App(CTk):
             print("Hotkey error:", e)
     def set_status(self, text, key=None):
         self.status_label.configure(text=text)
-    def start_recording(self):
-        self.set_status("Macro Status: Started Recroding")
-        self.macro_running = True
-        while self.macro_running:
-            # macro logic only
-            time.sleep(0.01)
-    def stop_recording(self):
-        if not self.macro_running:
-            return
-        self.macro_running = False
-        self.after(0, self.deiconify)  # show window safely
-        self.set_status("Macro Status: Stopped Recording")
     def start_playback(self):
-        self.set_status("Macro Status: Started Playback")
+        self.set_status("Macro Status: Started")
         self.macro_running = True
         while self.macro_running:
             # macro logic only
@@ -487,7 +479,7 @@ class App(CTk):
             return
         self.macro_running = False
         self.after(0, self.deiconify)  # show window safely
-        self.set_status("Macro Status: Stopped Playback")
+        self.set_status("Macro Status: Stopped")
 if __name__ == "__main__":
     app = App()
     app.mainloop()
