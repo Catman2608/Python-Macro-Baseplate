@@ -1,8 +1,12 @@
 {
-    "active_config": "sab",
+    "enable_hotkeys": "off",
     "start_key": "F5",
-    "start_recording_key": "F6",
+    "change_bar_areas_key": "F6",
     "stop_key": "F7",
-    "stop_recording_key": "F8",
-    "combobox_active_config": "sab"
+    "screenshot_key": "F8",
+    "rod_slot": "1",
+    "bag_slot": "2",
+    "sundial_slot": "6",
+    "target_slot": "7",
+    "switch_enable_hotkeys": "off"
 }
