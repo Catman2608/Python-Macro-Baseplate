@@ -1,1 +1,16 @@
-{"last_config": "sab"}
+{
+    "version": "3.01",
+    "tos_accepted": true,
+    "last_config": "sab",
+    "last_rod": "Basic Rod",
+    "bar_areas": {
+        "shake": null,
+        "fish": null,
+        "friend": null,
+        "totem": null
+    },
+    "start_key": "F5",
+    "change_bar_areas_key": "F6",
+    "screenshot_key": "F8",
+    "stop_key": "F7"
+}
