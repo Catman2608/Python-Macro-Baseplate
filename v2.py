@@ -356,7 +356,7 @@ class App(CTk):
         
         # Safe Defaults Before Key Listener Starts (Will Be Overwritten By Load_Misc_Settings)
         self.bar_areas = {"shake": None, "fish": None, "friend": None, "totem": None}
-        self.current_rod_name = "Basic Rod"
+        self.current_config_name = "Basic config"
 
         # Invalidate Scale Cache If The Window Moves To A Different Monitor
         if sys.platform == "darwin":
@@ -501,7 +501,7 @@ class App(CTk):
 
         CTkLabel(basic_settings, text="Basic Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
 
-        CTkLabel(basic_settings, text="Rod Type:").grid(row=1, column=0, padx=12, pady=10, sticky="w")
+        CTkLabel(basic_settings, text="config Type:").grid(row=1, column=0, padx=12, pady=10, sticky="w")
 
         self.config_var = StringVar(value="default")
 
@@ -526,15 +526,14 @@ class App(CTk):
                   width=140
                   ).grid(row=0, column=1, padx=12, pady=12, sticky="w")
 
-        CTkButton(basic_settings, text="Add", width=40, corner_radius=8, command=self.add_rod).grid(row=1, column=2, padx=12, pady=12, sticky="w")
-        CTkButton(basic_settings, text="Delete", width=40, corner_radius=8, command=self.delete_rod).grid(row=1, column=3, padx=12, pady=12, sticky="w")
+        CTkButton(basic_settings, text="Add", width=40, corner_radius=8, command=self.add_config).grid(row=1, column=2, padx=12, pady=12, sticky="w")
+        CTkButton(basic_settings, text="Delete", width=40, corner_radius=8, command=self.delete_config).grid(row=1, column=3, padx=12, pady=12, sticky="w")
 
         CTkButton(basic_settings, text="Reset Settings", width=140, corner_radius=8, command=self.reset_settings).grid(row=3, column=0, padx=12, pady=12, sticky="w")
         # Hotkey and Hotbar Settings
         hotkey_hotbar_settings = CTkFrame(scroll, border_width=2, border_color = "#364167", fg_color = "#222244")
         hotkey_hotbar_settings.grid(row=1, column=0, padx=20, pady=20, sticky="nw")
         CTkLabel(hotkey_hotbar_settings, text="Hotkey Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=0, padx=12, pady=8, sticky="w")
-        CTkLabel(hotkey_hotbar_settings, text="Hotbar Settings", font=CTkFont(size=14, weight="bold")).grid(row=0, column=2, padx=12, pady=8, sticky="w")
         # Key binds
         CTkLabel(hotkey_hotbar_settings, text="Start Key").grid(row=1, column=0, padx=12, pady=6, sticky="w" )
         CTkLabel(hotkey_hotbar_settings, text="Change Bar Areas Key").grid(row=2, column=0, padx=12, pady=6, sticky="w" )
@@ -563,28 +562,6 @@ class App(CTk):
         self.vars["screenshot_key"] = screenshot_key_var
         screenshot_key_entry = CTkEntry(hotkey_hotbar_settings, width=120, textvariable=screenshot_key_var)
         screenshot_key_entry.grid(row=4, column=1, padx=12, pady=10, sticky="w")
-        # Hotkey for items
-        CTkLabel(hotkey_hotbar_settings, text="Fishing Rod Slot:").grid(row=1, column=2, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_hotbar_settings, text="Equipment Bag Slot").grid(row=2, column=2, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_hotbar_settings, text="Sundial Totem Slot:").grid(row=3, column=2, padx=12, pady=6, sticky="w" )
-        CTkLabel(hotkey_hotbar_settings, text="Target Totem Slot:").grid(row=4, column=2, padx=12, pady=6, sticky="w" )
-        # Hotkey entries
-        rod_slot_var = StringVar(value="1")
-        self.vars["rod_slot"] = rod_slot_var
-        rod_slot_entry = CTkEntry(hotkey_hotbar_settings, width=120, textvariable=rod_slot_var)
-        rod_slot_entry.grid(row=1, column=3, padx=12, pady=8, sticky="w")
-        bag_slot_var = StringVar(value="2")
-        self.vars["bag_slot"] = bag_slot_var
-        bag_slot_entry = CTkEntry(hotkey_hotbar_settings, width=120, textvariable=bag_slot_var)
-        bag_slot_entry.grid(row=2, column=3, padx=12, pady=8, sticky="w")
-        sundial_slot_var = StringVar(value="6")
-        self.vars["sundial_slot"] = sundial_slot_var
-        sundial_slot_entry = CTkEntry(hotkey_hotbar_settings, width=120, textvariable=sundial_slot_var)
-        sundial_slot_entry.grid(row=3, column=3, padx=12, pady=8, sticky="w")
-        target_slot_var = StringVar(value="7")
-        self.vars["target_slot"] = target_slot_var
-        target_slot_entry = CTkEntry(hotkey_hotbar_settings, width=120, textvariable=target_slot_var)
-        target_slot_entry.grid(row=4, column=3, padx=12, pady=8, sticky="w")
     # Second tab
     def build_2_tab(self, parent):
         # 4 lines below initialize the scroll wheel and the grid section
@@ -774,7 +751,7 @@ class App(CTk):
     def load_settings(self, name="default"):
         """Load settings from a JSON config file."""
         path = os.path.join(CONFIG_DIR, name, "config.json")
-        rod_folder = os.path.join(CONFIG_DIR, name.replace(".json", ""))
+        config_folder = os.path.join(CONFIG_DIR, name.replace(".json", ""))
         if not os.path.exists(path):
             self.set_status(f"Config not found: {name}")
             return
@@ -871,8 +848,7 @@ class App(CTk):
             if os.path.exists(path):
                 with open(path, "r") as f:
                     data = json.load(f)
-                    self.current_rod_name = data.get("last_rod", "Basic Rod")
-                    self.bar_areas = data.get("bar_areas", {"shake": None, "fish": None, "friend": None, "totem": None})
+                    self.current_config_name = data.get("last_config", "Basic config")
                     # Important: Load Hotkeys If Present
                     start_key = data.get("start_key", "F5")
                     change_key = data.get("change_bar_areas_key", "F6")
@@ -890,11 +866,9 @@ class App(CTk):
                     self.hotkey_screenshot = self._string_to_key(screenshot_key)
                     self.hotkey_stop = self._string_to_key(stop_key)
             else:
-                self.current_rod_name = "Basic Rod"
-                self.bar_areas = {"fish": None, "shake": None, "friend": None, "totem": None}
+                self.current_config_name = "Basic config"
         except:
-            self.current_rod_name = "Basic Rod"
-            self.bar_areas = {"fish": None, "shake": None, "friend": None, "totem": None}
+            self.current_config_name = "Basic config"
     def save_misc_settings(self):
         """Save misc settings without overwriting last_config."""
         path = os.path.join(BASE_PATH, "last_config.json")
@@ -920,7 +894,7 @@ class App(CTk):
             else:
                 clean_bar_areas[key] = None
         # Update Fields (Merge Only)
-        data["last_rod"] = self.current_rod_name
+        data["last_config"] = self.current_config_name
         data["bar_areas"] = clean_bar_areas
         # Save Hotkeys
         data["start_key"] = self.vars["start_key"].get()
@@ -930,12 +904,12 @@ class App(CTk):
         # Write Merged Result
         with open(path, "w") as f:
             json.dump(data, f, indent=4)
-    # Rod Utilities
-    def add_rod(self):
-        """Add a new rod configuration with user input."""
-        # Create A Dialog Window To Ask For Rod Name
+    # config Utilities
+    def add_config(self):
+        """Add a new config configuration with user input."""
+        # Create A Dialog Window To Ask For config Name
         dialog = CTkToplevel(self)
-        dialog.title("Add New Rod")
+        dialog.title("Add New config")
         dialog.geometry("300x120")
         dialog.resizable(False, False)
         
@@ -950,7 +924,7 @@ class App(CTk):
         dialog.geometry(f"+{x}+{y}")
         
         # Label
-        label = CTkLabel(dialog, text="Enter Rod Name:")
+        label = CTkLabel(dialog, text="Enter config Name:")
         label.pack(pady=10)
         
         # Entry
@@ -963,12 +937,12 @@ class App(CTk):
         def on_confirm():
             new_name = entry.get().strip()
             if not new_name:
-                messagebox.showwarning("Invalid Input", "Rod name cannot be empty!")
+                messagebox.showwarning("Invalid Input", "config name cannot be empty!")
                 return
             
             # Check If Name Already Exists
             if new_name in self.get_config_list():
-                messagebox.showwarning("Duplicate Name", f"Rod '{new_name}' already exists!")
+                messagebox.showwarning("Duplicate Name", f"config '{new_name}' already exists!")
                 return
             
             result["name"] = new_name
@@ -1011,14 +985,14 @@ class App(CTk):
             self.config_dropdown.configure(values=self.get_config_list())
             self.config_var.set(new_name)
             self.on_config_selected(new_name)
-            self.set_status(f"Rod '{new_name}' created and selected")
+            self.set_status(f"config '{new_name}' created and selected")
 
-    def delete_rod(self):
-        """Delete current rod configuration with confirmation."""
+    def delete_config(self):
+        """Delete current config configuration with confirmation."""
         current = self.config_var.get()
 
         if current == "default":
-            messagebox.showwarning("Cannot Delete", "Cannot delete the default rod!")
+            messagebox.showwarning("Cannot Delete", "Cannot delete the default config!")
             return
         
         # Show Confirmation Dialog
@@ -1040,9 +1014,9 @@ class App(CTk):
                 self.config_dropdown.configure(values=new_list)
                 self.config_var.set("default")
                 self.on_config_selected("default")
-                self.set_status(f"Rod '{current}' deleted. Switched to default.")
+                self.set_status(f"config '{current}' deleted. Switched to default.")
             except Exception as e:
-                messagebox.showerror("Delete Error", f"Failed to delete rod: {e}")
+                messagebox.showerror("Delete Error", f"Failed to delete config: {e}")
 
     def reset_settings(self):
         """Reset settings to default with confirmation."""
@@ -1098,33 +1072,47 @@ class App(CTk):
             return key.char.lower()  # Letter Keys
         except AttributeError:
             return str(key).replace("Key.", "").lower()
-    def on_key_press(self, key):
-        pressed_key = self.normalize_key(key)
-        enable_hotkeys = (self.vars["enable_hotkeys"].get() or "on")
-        # Save Settings (No Prompt - Auto Save Before Macro Starts)
+    def _handle_key_press_main_thread(self, pressed_key):
+        enable_hotkeys_var = self.vars.get("enable_hotkeys")
+        enable_hotkeys = enable_hotkeys_var.get() if enable_hotkeys_var else "off"
+
         config_name = self.config_var.get()
-        # Change Hotkeys First
+
+        # Update hotkeys
         self.hotkey_start = self.vars["start_key"].get()
         self.hotkey_change_areas = self.vars["change_bar_areas_key"].get()
         self.hotkey_stop = self.vars["stop_key"].get()
         self.hotkey_screenshot = self.vars["screenshot_key"].get()
+
         if enable_hotkeys == "on":
             if pressed_key == self._normalize_hotkey_value(self.hotkey_start) and not self.macro_running:
                 self.save_settings(config_name, prompt=True)
+
                 if self.vars["auto_zoom"].get() == "on" and self.vars["casting_mode"].get() == "Perfect":
-                    messagebox.showwarning("Error", "Auto Zoom In and Perfect Cast can't be enabled at once. \nDisable one of them to continue.")
+                    messagebox.showwarning(
+                        "Error",
+                        "Auto Zoom In and Perfect Cast can't be enabled at once.\nDisable one of them to continue."
+                    )
                 else:
                     self.macro_running = True
-                    self.after(0, self.withdraw)
-                    threading.Thread(target=self.start_macro, daemon=True).start() # This Will Start The Macro In A New Thread, Allowing The Gui To Remain Responsive
+                    self.withdraw()
+                    threading.Thread(target=self.start_macro, daemon=True).start()
+
             elif pressed_key == self._normalize_hotkey_value(self.hotkey_change_areas):
                 self.open_area_selector()
+
             elif pressed_key == self._normalize_hotkey_value(self.hotkey_screenshot):
                 self._take_debug_screenshot()
+
             elif pressed_key == self._normalize_hotkey_value(self.hotkey_stop):
                 self.stop_macro()
         else:
             self.save_settings(config_name, prompt=False)
+    def on_key_press(self, key):
+        pressed_key = self.normalize_key(key)
+
+        # Move EVERYTHING that touches tkinter into main thread
+        self.after(0, self._handle_key_press_main_thread, pressed_key)
     def set_status(self, text, key=None):
         self.status_label.configure(text=text)
     # Macro Helper Functions
